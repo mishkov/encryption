@@ -156,5 +156,45 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
     });
   }
 
-  void _decrypt() {}
+  void _decrypt() {
+    final messenger = ScaffoldMessenger.of(context);
+
+    final key = int.tryParse(_keyController.text);
+    if (key == null) {
+      messenger.showMaterialBanner(
+        MaterialBanner(
+          content: const Text('Некорректный ключ!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                messenger.hideCurrentMaterialBanner();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+
+      return;
+    }
+
+    final source = _encryptedController.text.toUpperCase().characters;
+    String decryptedText = '';
+    for (final char in source) {
+      if (_alphabet.contains(char)) {
+        int index = _alphabet.indexOf(char) - key;
+        if (index.isNegative) {
+          index = _alphabet.length + index;
+        }
+
+        decryptedText += _alphabet[index];
+      } else {
+        decryptedText += char;
+      }
+    }
+
+    setState(() {
+      _sourceController.text = decryptedText;
+    });
+  }
 }
