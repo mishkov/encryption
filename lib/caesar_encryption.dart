@@ -55,65 +55,68 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Шифрование Цезаря')),
-      body: Center(
-        child: LayoutBuilder(builder: (context, constraints) {
-          return SizedBox(
-            width: constraints.maxWidth > 500 ? 500 : constraints.maxWidth,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Используемый алфавит:',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(_alphabet.join(', ')),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _sourceController,
-                    decoration: const InputDecoration(
-                      label: Text('Незашифрованный текст'),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: LayoutBuilder(builder: (context, constraints) {
+            return SizedBox(
+              width: constraints.maxWidth > 500 ? 500 : constraints.maxWidth,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Используемый алфавит:',
+                      style: Theme.of(context).textTheme.headline6,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _encryptedController,
-                    decoration: const InputDecoration(
-                      label: Text('Зашифрованный текст'),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    controller: _keyController,
-                    decoration: const InputDecoration(
-                      label: Text('Ключ'),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: _decrypt,
-                        child: const Text('Дешифровать'),
+                    const SizedBox(height: 4),
+                    Text(_alphabet.join(', ')),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _sourceController,
+                      decoration: const InputDecoration(
+                        label: Text('Незашифрованный текст'),
                       ),
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: _encrypt,
-                        child: const Text('Шифровать'),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _encryptedController,
+                      decoration: const InputDecoration(
+                        label: Text('Зашифрованный текст'),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      controller: _keyController,
+                      decoration: const InputDecoration(
+                        label: Text('Ключ'),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _decrypt,
+                          child: const Text('Дешифровать'),
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: _encrypt,
+                          child: const Text('Шифровать'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }
