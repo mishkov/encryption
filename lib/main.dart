@@ -1,3 +1,4 @@
+import 'package:encryption/affine_caesar_substitution.dart';
 import 'package:encryption/caesar_encryption.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Шифрование'),
       routes: {
         CaesarEncryption.route: (context) => const CaesarEncryption(),
+        AffineCaesarSubstitution.route: (context) =>
+            const AffineCaesarSubstitution(),
       },
     );
   }
@@ -40,16 +43,33 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, CaesarEncryption.route);
-              },
-              child: const Text('Шифрование Цезаря'),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return SizedBox(
+              width: constraints.maxWidth > 400 ? 400 : constraints.maxWidth,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, CaesarEncryption.route);
+                    },
+                    child: const Text('Шифрование Цезаря'),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, AffineCaesarSubstitution.route);
+                    },
+                    child: const Text('Aффинная система подстановок Цезаря'),
+                  ),
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );
