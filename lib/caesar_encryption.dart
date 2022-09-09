@@ -144,7 +144,8 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
     String encryptedText = '';
     for (final char in source) {
       if (_alphabet.contains(char)) {
-        encryptedText += _alphabet[_alphabet.indexOf(char) + key];
+        encryptedText +=
+            _alphabet[(_alphabet.indexOf(char) + key) % _alphabet.length];
       } else {
         encryptedText += char;
       }
