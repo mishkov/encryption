@@ -142,14 +142,15 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
 
   void _encrypt() {
     final a = int.tryParse(_aController.text);
-    if (!checkKey(() => a != null, 'Неверное знаячениеb a')) return;
+    if (!checkKey(() => a != null, 'Неверное знаячениеb a', context)) return;
 
     final b = int.tryParse(_bController.text);
-    if (!checkKey(() => b != null, 'Неверное знаячение b')) return;
+    if (!checkKey(() => b != null, 'Неверное знаячение b', context)) return;
 
     if (!checkKey(
       () => b!.gcd(_alphabet.length) == 1,
       'Неверное знаячение b. Максимальный общий делитель m и b должен быть 1',
+      context,
     )) return;
 
     final source = _sourceController.text.toUpperCase().characters;
@@ -170,38 +171,17 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
     });
   }
 
-  bool checkKey(bool Function() isValid, String errorMessage) {
-    if (!isValid()) {
-      final messenger = ScaffoldMessenger.of(context);
-      messenger.showMaterialBanner(
-        MaterialBanner(
-          content: Text(errorMessage),
-          actions: [
-            TextButton(
-              onPressed: () {
-                messenger.hideCurrentMaterialBanner();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   void _decrypt() {
     final a = int.tryParse(_aController.text);
-    if (!checkKey(() => a != null, 'Неверное знаячениеb a')) return;
+    if (!checkKey(() => a != null, 'Неверное знаячениеb a', context)) return;
 
     final b = int.tryParse(_bController.text);
-    if (!checkKey(() => b != null, 'Неверное знаячение b')) return;
+    if (!checkKey(() => b != null, 'Неверное знаячение b', context)) return;
 
     if (!checkKey(
       () => b!.gcd(_alphabet.length) == 1,
       'Неверное знаячение b. Максимальный общий делитель m и b должен быть 1',
+      context,
     )) return;
 
     int reverseA = 0;
