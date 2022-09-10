@@ -1,5 +1,6 @@
 import 'package:encryption/affine_caesar_substitution.dart';
 import 'package:encryption/caesar_encryption.dart';
+import 'package:encryption/caesar_encryption_with_key_word.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,6 +22,8 @@ class MyApp extends StatelessWidget {
         CaesarEncryption.route: (context) => const CaesarEncryption(),
         AffineCaesarSubstitution.route: (context) =>
             const AffineCaesarSubstitution(),
+        CaesarEncryptionWithKeyWord.route: (context) =>
+            const CaesarEncryptionWithKeyWord(),
       },
     );
   }
@@ -65,6 +68,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           context, AffineCaesarSubstitution.route);
                     },
                     child: const Text('Aффинная система подстановок Цезаря'),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        CaesarEncryptionWithKeyWord.route,
+                      );
+                    },
+                    child: const Text('Шифрование Цезаря с ключевым словом'),
                   ),
                 ],
               ),
