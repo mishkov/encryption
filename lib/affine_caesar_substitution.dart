@@ -141,8 +141,6 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
   }
 
   void _encrypt() {
-    final messenger = ScaffoldMessenger.of(context);
-
     final a = int.tryParse(_aController.text);
     if (!checkKey(() => a != null, 'Неверное знаячениеb a')) return;
 
@@ -195,37 +193,29 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
   }
 
   void _decrypt() {
-    final messenger = ScaffoldMessenger.of(context);
+    final a = int.tryParse(_aController.text);
+    if (!checkKey(() => a != null, 'Неверное знаячениеb a')) return;
 
-    final key = int.tryParse(_aController.text);
-    if (key == null) {
-      messenger.showMaterialBanner(
-        MaterialBanner(
-          content: const Text('Некорректный ключ!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                messenger.hideCurrentMaterialBanner();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+    final b = int.tryParse(_bController.text);
+    if (!checkKey(() => b != null, 'Неверное знаячение b')) return;
 
-      return;
+    if (!checkKey(
+      () => b!.gcd(_alphabet.length) == 1,
+      'Неверное знаячение b. Максимальный общий делитель m и b должен быть 1',
+    )) return;
+
+    int reverseA = 0;
+    while ((a! * reverseA) % _alphabet.length != 1) {
+      reverseA++;
     }
-
     final source = _encryptedController.text.toUpperCase().characters;
     String decryptedText = '';
     for (final char in source) {
       if (_alphabet.contains(char)) {
-        int index = _alphabet.indexOf(char) - key;
-        if (index.isNegative) {
-          index = _alphabet.length + index;
-        }
+        final charIndex = _alphabet.indexOf(char);
+        int shiftedIndex = reverseA * (charIndex - b!) % _alphabet.length;
 
-        decryptedText += _alphabet[index];
+        decryptedText += _alphabet[shiftedIndex];
       } else {
         decryptedText += char;
       }
