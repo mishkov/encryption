@@ -204,7 +204,9 @@ class CcaesarEncryptionState extends State<CaesarEncryptionWithKeyWord> {
 
     final keyWordLettersToPaste = <String>{};
     for (final char in _keyWordControleer.text.characters) {
-      keyWordLettersToPaste.add(char);
+      if (_alphabet.contains(char)) {
+        keyWordLettersToPaste.add(char);
+      }
     }
 
     _table = <String, String>{};
