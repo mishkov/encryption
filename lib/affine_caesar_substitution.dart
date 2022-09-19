@@ -54,6 +54,8 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
     'Я',
   ];
 
+  Map<String, String> _table = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,6 +121,12 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    EncryptionTable(
+                      a: int.tryParse(_aController.text) ?? 0,
+                      b: int.tryParse(_bController.text) ?? 0,
+                      table: _table,
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         ElevatedButton(
@@ -154,6 +162,13 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
       'Неверное знаячение b. Максимальный общий делитель m и b должен быть 1',
       context,
     )) return;
+
+    for (final char in _alphabet) {
+      final charIndex = _alphabet.indexOf(char);
+      final shiftedIndex = (a! * charIndex + b!) % _alphabet.length;
+
+      _table[char] = _alphabet[shiftedIndex];
+    }
 
     final source = _sourceController.text.toUpperCase().characters;
     String encryptedText = '';
@@ -206,5 +221,101 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
     setState(() {
       _sourceController.text = decryptedText;
     });
+  }
+}
+
+class EncryptionTable extends StatefulWidget {
+  const EncryptionTable({
+    Key? key,
+    required Map<String, String> table,
+    required this.a,
+    required this.b,
+  })  : _table = table,
+        super(key: key);
+
+  final int a;
+  final int b;
+  final Map<String, String> _table;
+
+  @override
+  State<EncryptionTable> createState() => _EncryptionTableState();
+}
+
+class _EncryptionTableState extends State<EncryptionTable> {
+  bool toShowTable = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final keys = widget._table.keys;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Таблица соответствия:',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  toShowTable = !toShowTable;
+                });
+              },
+              child: Text('${toShowTable ? "Спрятать" : "Показать"} таблицу'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: toShowTable
+              ? Table(border: TableBorder.all(), children: [
+                  TableRow(
+                    children: [
+                      const Text('t'),
+                      Text('${widget.a}t+${widget.b}'),
+                    ],
+                  ),
+                  ...List.generate(
+                    keys.length,
+                    (index) {
+                      final key = keys.elementAt(index);
+                      final value = widget._table[key] ?? 'ERROR';
+
+                      return TableRow(
+                        children: [
+                          Text(key),
+                          Text(value),
+                        ],
+                      );
+                    },
+                  ),
+                ])
+              : const SizedBox.shrink(),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        ElevatedButton(
+          onPressed: () {
+            String formattedTable = '';
+
+            for (var i = 0; i < keys.length; i++) {
+              final key = keys.elementAt(i);
+              final value = widget._table[key];
+
+              formattedTable += '$i\t$key\t$value\t\n';
+            }
+            formattedTable += '\n';
+
+            Clipboard.setData(ClipboardData(text: formattedTable));
+          },
+          child: const Text('Копировать таблицу'),
+        ),
+      ],
+    );
   }
 }
