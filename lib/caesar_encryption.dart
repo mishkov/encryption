@@ -51,6 +51,8 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
     'Я',
   ];
 
+  Map<String, String> _table = {};
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,6 +100,8 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    EncryptionTable(table: _table),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         ElevatedButton(
@@ -143,12 +147,16 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
       return;
     }
 
+    for (final char in _alphabet) {
+      _table[char] =
+          _alphabet[(_alphabet.indexOf(char) + key) % _alphabet.length];
+    }
+
     final source = _sourceController.text.toUpperCase().characters;
     String encryptedText = '';
     for (final char in source) {
       if (_alphabet.contains(char)) {
-        encryptedText +=
-            _alphabet[(_alphabet.indexOf(char) + key) % _alphabet.length];
+        encryptedText += _table[char]!;
       } else {
         encryptedText += char;
       }
@@ -199,5 +207,112 @@ class CcaesarEncryptionState extends State<CaesarEncryption> {
     setState(() {
       _sourceController.text = decryptedText;
     });
+  }
+}
+
+class EncryptionTable extends StatefulWidget {
+  const EncryptionTable({
+    Key? key,
+    required Map<String, String> table,
+  })  : _table = table,
+        super(key: key);
+
+  final Map<String, String> _table;
+
+  @override
+  State<EncryptionTable> createState() => _EncryptionTableState();
+}
+
+class _EncryptionTableState extends State<EncryptionTable> {
+  bool toShowTable = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final keys = widget._table.keys;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Таблица соответствия:',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  toShowTable = !toShowTable;
+                });
+              },
+              child: Text('${toShowTable ? "Спрятать" : "Показать"} таблицу'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: toShowTable
+              ? Table(
+                  border: TableBorder.all(),
+                  columnWidths: const <int, TableColumnWidth>{
+                    0: IntrinsicColumnWidth(),
+                    1: IntrinsicColumnWidth(),
+                  },
+                  children: [
+                    TableRow(
+                      children: List.generate(
+                        keys.length,
+                        (index) {
+                          final key = keys.elementAt(index);
+
+                          return Text(key);
+                        },
+                      ),
+                    ),
+                    TableRow(
+                      children: List.generate(
+                        keys.length,
+                        (index) {
+                          final key = keys.elementAt(index);
+                          final value = widget._table[key] ?? 'ERROR';
+
+                          return Text(value);
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        ElevatedButton(
+          onPressed: () {
+            String formattedTable = '';
+
+            for (var i = 0; i < keys.length; i++) {
+              final key = keys.elementAt(i);
+
+              formattedTable += '$key\t';
+            }
+            formattedTable += '\n';
+
+            for (var i = 0; i < keys.length; i++) {
+              final key = keys.elementAt(i);
+              final value = widget._table[key];
+
+              formattedTable += '$value\t';
+            }
+            formattedTable += '\n';
+
+            Clipboard.setData(ClipboardData(text: formattedTable));
+          },
+          child: const Text('Копировать таблицу'),
+        ),
+      ],
+    );
   }
 }
