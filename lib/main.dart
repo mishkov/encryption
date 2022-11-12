@@ -1,6 +1,7 @@
 import 'package:encryption/affine_caesar_substitution.dart';
 import 'package:encryption/caesar_encryption.dart';
 import 'package:encryption/caesar_encryption_with_key_word.dart';
+import 'package:encryption/vizhiner.dart';
 import 'package:flutter/material.dart';
 
 import 'trisemus.dart';
@@ -21,12 +22,21 @@ class MyApp extends StatelessWidget {
       ),
       home: const MyHomePage(title: 'Шифрование'),
       routes: {
-        CaesarEncryption.route: (context) => const CaesarEncryption(),
-        AffineCaesarSubstitution.route: (context) =>
-            const AffineCaesarSubstitution(),
-        CaesarEncryptionWithKeyWord.route: (context) =>
-            const CaesarEncryptionWithKeyWord(),
-        Trisemus.route: (context) => const Trisemus(),
+        CaesarEncryption.route: (context) {
+          return const CaesarEncryption();
+        },
+        AffineCaesarSubstitution.route: (context) {
+          return const AffineCaesarSubstitution();
+        },
+        CaesarEncryptionWithKeyWord.route: (context) {
+          return const CaesarEncryptionWithKeyWord();
+        },
+        Trisemus.route: (context) {
+          return const Trisemus();
+        },
+        Vizhiner.route: (context) {
+          return const c();
+        },
       },
     );
   }
@@ -91,6 +101,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     child: const Text('Трисемус'),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        Vizhiner.route,
+                      );
+                    },
+                    child: const Text('Вижинер'),
                   ),
                 ],
               ),
