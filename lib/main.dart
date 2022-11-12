@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           return const Trisemus();
         },
         Vizhiner.route: (context) {
-          return const c();
+          return const Vizhiner();
         },
       },
     );
