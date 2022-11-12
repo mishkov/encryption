@@ -1,6 +1,7 @@
 import 'package:encryption/affine_caesar_substitution.dart';
 import 'package:encryption/caesar_encryption.dart';
 import 'package:encryption/caesar_encryption_with_key_word.dart';
+import 'package:encryption/playfair.dart';
 import 'package:encryption/vizhiner.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
         },
         Vizhiner.route: (context) {
           return const Vizhiner();
+        },
+        Playfair.route: (context) {
+          return const Playfair();
         },
       },
     );
@@ -111,6 +115,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     child: const Text('Вижинер'),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        Playfair.route,
+                      );
+                    },
+                    child: const Text('Плейфейр'),
                   ),
                 ],
               ),
