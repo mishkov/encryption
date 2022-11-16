@@ -55,6 +55,7 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
   ];
 
   Map<String, String> _table = {};
+  Map<String, String> _shiftedIndexes = {};
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +126,7 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
                       a: int.tryParse(_aController.text) ?? 0,
                       b: int.tryParse(_bController.text) ?? 0,
                       table: _table,
+                      indexes: _shiftedIndexes,
                     ),
                     const SizedBox(height: 16),
                     Row(
@@ -168,6 +170,7 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
       final shiftedIndex = (a! * charIndex + b!) % _alphabet.length;
 
       _table[char] = _alphabet[shiftedIndex];
+      _shiftedIndexes[char] = shiftedIndex.toString();
     }
 
     final source = _sourceController.text.toUpperCase().characters;
@@ -204,6 +207,10 @@ class CcaesarEncryptionState extends State<AffineCaesarSubstitution> {
     int reverseA = 0;
     while ((a! * reverseA) % _alphabet.length != 1) {
       reverseA++;
+      if (reverseA > 200) {
+        if (!checkKey(() => b != null,
+            'Не удалось подобрать reverseA. Проверено до 200', context)) return;
+      }
     }
     final source = _encryptedController.text.toUpperCase().characters;
     String decryptedText = '';
@@ -230,12 +237,14 @@ class EncryptionTable extends StatefulWidget {
     required Map<String, String> table,
     required this.a,
     required this.b,
+    required this.indexes,
   })  : _table = table,
         super(key: key);
 
   final int a;
   final int b;
   final Map<String, String> _table;
+  final Map<String, String> indexes;
 
   @override
   State<EncryptionTable> createState() => _EncryptionTableState();
@@ -277,6 +286,7 @@ class _EncryptionTableState extends State<EncryptionTable> {
                     children: [
                       const Text('t'),
                       Text('${widget.a}t+${widget.b}'),
+                      const Text(''),
                     ],
                   ),
                   ...List.generate(
@@ -288,6 +298,7 @@ class _EncryptionTableState extends State<EncryptionTable> {
                       return TableRow(
                         children: [
                           Text(key),
+                          Text(widget.indexes[value] ?? 'error'),
                           Text(value),
                         ],
                       );
