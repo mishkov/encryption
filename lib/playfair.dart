@@ -116,10 +116,6 @@ class CcaesarEncryptionState extends State<Playfair> {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        ElevatedButton(
-                          onPressed: _decrypt,
-                          child: const Text('Дешифровать'),
-                        ),
                         const Spacer(),
                         ElevatedButton(
                           onPressed: _encrypt,
@@ -138,6 +134,7 @@ class CcaesarEncryptionState extends State<Playfair> {
   }
 
   void _encrypt() {
+    print(isInSameRowOrColumn('Р', 'Ж'));
     final keyWordLettersToPaste = <String>{};
     for (final char in _keyWordControleer.text.characters) {
       if (_alphabet.contains(char)) {
@@ -206,6 +203,31 @@ class CcaesarEncryptionState extends State<Playfair> {
     });
   }
 
+  bool isInSameRowOrColumn(String a, String b) {
+    for (final column in _table) {
+      if (column.contains(a) && column.contains(b)) {
+        return true;
+      }
+    }
+    for (int row = 0; row < _table.first.length; row++) {
+      bool isContainA = false;
+      bool isContainB = false;
+      for (int column = 0; column < _table.length; column++) {
+        if (_table[column][row] == a) {
+          isContainA = true;
+        }
+        if (_table[column][row] == b) {
+          isContainB = true;
+        }
+      }
+
+      if (isContainA && isContainB) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   String findInTable(String key) {
     for (var i = 0; i < _table.length; i++) {
       for (var j = 0; j < _table[i].length; j++) {
@@ -220,54 +242,6 @@ class CcaesarEncryptionState extends State<Playfair> {
     }
 
     throw Exception('No such key in table: $key');
-  }
-
-  void _decrypt() {
-    final keyWordLettersToPaste = <String>{};
-    for (final char in _keyWordControleer.text.characters) {
-      if (_alphabet.contains(char)) {
-        keyWordLettersToPaste.add(char);
-      }
-    }
-
-    _table = List.generate(
-      _tableWidth,
-      (index) => List.generate(_tableHeight, (index) => ''),
-    );
-
-    var i = 0;
-    for (; i < keyWordLettersToPaste.length; i++) {
-      _table[i % _tableWidth][i ~/ _tableWidth] =
-          keyWordLettersToPaste.elementAt(i);
-    }
-
-    final remainingLetters = <String>[];
-    for (final char in _alphabet) {
-      if (!keyWordLettersToPaste.contains(char)) {
-        remainingLetters.add(char);
-      }
-    }
-
-    for (final remainingLetter in remainingLetters) {
-      _table[i % _tableWidth][i ~/ _tableWidth] = remainingLetter;
-      i++;
-    }
-
-    final source = _encryptedController.text.toUpperCase().characters;
-    String decryptedText = '';
-
-    // TODO: Implement
-    for (final char in source) {
-      if (_alphabet.contains(char)) {
-        decryptedText += findOriginInTable(char);
-      } else {
-        decryptedText += char;
-      }
-    }
-
-    setState(() {
-      _sourceController.text = decryptedText;
-    });
   }
 
   String findOriginInTable(String key) {
