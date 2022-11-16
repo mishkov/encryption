@@ -116,7 +116,10 @@ class CcaesarEncryptionState extends State<CaesarEncryptionWithKeyWord> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    EncryptionTable(table: _table),
+                    EncryptionTable(
+                      table: _table,
+                      alhabet: _alphabet,
+                    ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
@@ -250,10 +253,13 @@ class EncryptionTable extends StatefulWidget {
   const EncryptionTable({
     Key? key,
     required Map<String, String> table,
+    required List<String> alhabet,
   })  : _table = table,
+        _alhabet = alhabet,
         super(key: key);
 
   final Map<String, String> _table;
+  final List<String> _alhabet;
 
   @override
   State<EncryptionTable> createState() => _EncryptionTableState();
@@ -264,7 +270,14 @@ class _EncryptionTableState extends State<EncryptionTable> {
 
   @override
   Widget build(BuildContext context) {
-    final keys = widget._table.keys;
+    final keys = widget._table.keys.toList()
+      ..sort((a, b) {
+        if (widget._alhabet.indexOf(a) > widget._alhabet.indexOf(b)) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -303,7 +316,7 @@ class _EncryptionTableState extends State<EncryptionTable> {
 
                       return TableRow(
                         children: [
-                          Text(index.toString()),
+                          Text(widget._alhabet.indexOf(key).toString()),
                           Text(key),
                           Text(value),
                         ],
