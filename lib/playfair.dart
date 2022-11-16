@@ -134,9 +134,9 @@ class CcaesarEncryptionState extends State<Playfair> {
   }
 
   void _encrypt() {
-    print(getBigramFor('A', 'Й'));
+    print(getBigramFor('А', 'Й'));
     final keyWordLettersToPaste = <String>{};
-    for (final char in _keyWordControleer.text.characters) {
+    for (final char in _keyWordControleer.text.toUpperCase().characters) {
       if (_alphabet.contains(char)) {
         keyWordLettersToPaste.add(char);
       }
@@ -243,6 +243,37 @@ class CcaesarEncryptionState extends State<Playfair> {
           result += _table[index][row];
         }
       }
+    } else {
+      // x - column
+      // y - row
+      int ax = -1, ay = -1, bx = -1, by = -1;
+
+      for (int row = 0; row < _table.first.length; row++) {
+        for (int column = 0; column < _table.length; column++) {
+          if (_table[column][row] == a) {
+            ax = column;
+            ay = row;
+          }
+
+          if (_table[column][row] == b) {
+            bx = column;
+            by = row;
+          }
+        }
+      }
+
+      if (ax == -1 || ay == -1 || bx == -1 || by == -1) {
+        throw Exception();
+      }
+
+      int newX = ax;
+      int newY = by;
+      final rightResult = _table[newX][newY];
+      newX = bx;
+      newY = ay;
+      final leftResult = _table[newX][newY];
+      result += leftResult;
+      result += rightResult;
     }
 
     return result.isNotEmpty ? result : a + b;
@@ -280,7 +311,7 @@ class CcaesarEncryptionState extends State<Playfair> {
       }
     }
 
-    return true;
+    return false;
   }
 
   String findInTable(String key) {
