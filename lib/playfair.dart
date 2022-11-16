@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'check_key.dart';
+
 class Playfair extends StatefulWidget {
   static const route = '/playfair';
   const Playfair({Key? key}) : super(key: key);
@@ -167,6 +169,29 @@ class CcaesarEncryptionState extends State<Playfair> {
     }
 
     final source = _sourceController.text.toUpperCase().characters;
+    String text = '';
+    for (final letter in source) {
+      if (_alphabet.contains(letter.toUpperCase())) {
+        text += letter;
+      }
+    }
+    checkKey(
+      () => text.length % 2 == 0,
+      'шифруемый текст должен иметь четное количество букв!',
+      context,
+    );
+    checkKey(
+      () {
+        for (int i = 1; i < text.length; i++) {
+          if (text[i] == text[i - 1]) {
+            return false;
+          }
+        }
+        return true;
+      },
+      'В шифруемом тексте не должно быть биграмм, содержащих две одинаковые буквы',
+      context,
+    );
     String encryptedText = '';
     for (final char in source) {
       if (_alphabet.contains(char)) {
