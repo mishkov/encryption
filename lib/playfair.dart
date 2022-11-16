@@ -134,7 +134,7 @@ class CcaesarEncryptionState extends State<Playfair> {
   }
 
   void _encrypt() {
-    print(isInSameRowOrColumn('Р', 'Ж'));
+    print(getBigramFor('A', 'Й'));
     final keyWordLettersToPaste = <String>{};
     for (final char in _keyWordControleer.text.characters) {
       if (_alphabet.contains(char)) {
@@ -189,26 +189,80 @@ class CcaesarEncryptionState extends State<Playfair> {
       'В шифруемом тексте не должно быть биграмм, содержащих две одинаковые буквы',
       context,
     );
-    String encryptedText = '';
-    for (final char in source) {
-      if (_alphabet.contains(char)) {
-        encryptedText += findInTable(char);
-      } else {
-        encryptedText += char;
-      }
-    }
 
+    String encryptedText = '';
+
+    for (int i = 0; i < text.length; i += 2) {
+      final a = text[i];
+      final b = text[i + 1];
+      final bigram = getBigramFor(a, b);
+
+      encryptedText += bigram;
+    }
     setState(() {
       _encryptedController.text = encryptedText;
     });
   }
 
+  String getBigramFor(String a, String b) {
+    String result = '';
+
+    if (isInSameColumn(a, b)) {
+      for (final column in _table) {
+        final aIndex = column.indexOf(a);
+
+        if (aIndex != -1) {
+          result += column[(aIndex + 1) % column.length];
+        }
+
+        final bIndex = column.indexOf(b);
+        if (bIndex != -1) {
+          final index = (bIndex + 1) % column.length;
+          result += column[index];
+        }
+      }
+    } else if (isInSameRow(a, b)) {
+      for (int row = 0; row < _table.first.length; row++) {
+        int aIndex = -1;
+        int bIndex = -1;
+        for (int column = 0; column < _table.length; column++) {
+          if (_table[column][row] == a) {
+            aIndex = column;
+          }
+
+          if (_table[column][row] == b) {
+            bIndex = column;
+          }
+        }
+
+        if (aIndex != -1 && bIndex != -1) {
+          int index = (aIndex + 1) % _table.length;
+          result += _table[index][row];
+
+          index = (bIndex + 1) % _table.length;
+          result += _table[index][row];
+        }
+      }
+    }
+
+    return result.isNotEmpty ? result : a + b;
+  }
+
   bool isInSameRowOrColumn(String a, String b) {
+    return isInSameRow(a, b) || isInSameColumn(a, b);
+  }
+
+  bool isInSameColumn(String a, String b) {
     for (final column in _table) {
       if (column.contains(a) && column.contains(b)) {
         return true;
       }
     }
+
+    return false;
+  }
+
+  bool isInSameRow(String a, String b) {
     for (int row = 0; row < _table.first.length; row++) {
       bool isContainA = false;
       bool isContainB = false;
@@ -225,7 +279,8 @@ class CcaesarEncryptionState extends State<Playfair> {
         return true;
       }
     }
-    return false;
+
+    return true;
   }
 
   String findInTable(String key) {
